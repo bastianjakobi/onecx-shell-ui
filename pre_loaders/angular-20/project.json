@@ -3,6 +3,7 @@
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "ocx-angular-20-loader",
+  "root": "",
   "sourceRoot": "./src",
   "tags": [],
   "targets": {
