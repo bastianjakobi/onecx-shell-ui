@@ -1,16 +1,16 @@
-import { ModuleFederationConfig } from '@nx/module-federation'
-import { getOneCXSharedRecommendations } from '@onecx/accelerator'
+import { ModuleFederationConfig } from "@nx/module-federation";
+import { getOneCXSharedRecommendations } from "@onecx/accelerator";
 
 const config: ModuleFederationConfig = {
-  name: 'onecx-angular-20-loader',
+  name: "onecx-angular-20-loader",
   exposes: {
-    ['./Angular20Loader']: 'src/main.ts'
+    ["./Angular20Loader"]: "src/main.ts",
   },
   shared: (libraryName, sharedConfig) => {
-    const config = getOneCXSharedRecommendations(libraryName, sharedConfig)
+    const config = getOneCXSharedRecommendations(libraryName, sharedConfig);
     // Add custom shared configurations to the config object if needed
-    return config
-  }
-}
+    return config;
+  },
+};
 
-export default config
+export default config;

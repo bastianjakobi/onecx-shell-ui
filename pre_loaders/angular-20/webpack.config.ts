@@ -1,7 +1,10 @@
-import { Configuration } from 'webpack'
-import config from './module-federation.config'
-import { withModuleFederation } from '@nx/angular/module-federation'
-import { ModifySourcePlugin, ReplaceOperation } from 'modify-source-webpack-plugin'
+import { Configuration } from "webpack";
+import config from "./module-federation.config";
+import { withModuleFederation } from "@nx/angular/module-federation";
+import {
+  ModifySourcePlugin,
+  ReplaceOperation,
+} from "modify-source-webpack-plugin";
 
 /**
  * When module federation loads a package it checks:
@@ -21,28 +24,32 @@ import { ModifySourcePlugin, ReplaceOperation } from 'modify-source-webpack-plug
  * To make sure that the preloader is chosen over other packages, we use a magic character
  * that is greater than any other character in the Unicode table.
  */
-const magicChar = String.fromCodePoint(0x10ffff) // Magic character for preloaders
+const magicChar = String.fromCodePoint(0x10ffff); // Magic character for preloaders
 
 const modifyPrimeNgPlugin = new ModifySourcePlugin({
   rules: [
     {
       test: (module) => {
         if (module.resource) {
-          return module.resource.includes('primeng')
+          return module.resource.includes("primeng");
         }
-        return false
+        return false;
       },
       operations: [
         new ReplaceOperation(
-          'all',
-          'document\\.createElement\\(',
-          'document.createElementFromPrimeNg({"this": this, "arguments": Array.from(arguments)},'
+          "all",
+          "document\\.createElement\\(",
+          'document.createElementFromPrimeNg({"this": this, "arguments": Array.from(arguments)},',
         ),
-        new ReplaceOperation('all', 'Theme.setLoadedStyleName', '(function(_){})')
-      ]
-    }
-  ]
-})
+        new ReplaceOperation(
+          "all",
+          "Theme.setLoadedStyleName",
+          "(function(_){})",
+        ),
+      ],
+    },
+  ],
+});
 
 // Replace createElement only in @angular/platform-browser SharedStylesHost
 const modifyAngularCorePlugin = new ModifySourcePlugin({
@@ -50,43 +57,50 @@ const modifyAngularCorePlugin = new ModifySourcePlugin({
     {
       test: (module) => {
         if (module.resource) {
-          return module.resource.includes('@angular/platform-browser')
+          return module.resource.includes("@angular/platform-browser");
         }
-        return false
+        return false;
       },
       operations: [
         new ReplaceOperation(
-          'all',
+          "all",
           "this\\.doc\\.createElement\\(\\'style\\'",
-          "this.doc.createElementFromSharedStylesHost({'this': this, 'arguments': Array.from(arguments)},'style'"
-        )
-      ]
-    }
-  ]
-})
+          "this.doc.createElementFromSharedStylesHost({'this': this, 'arguments': Array.from(arguments)},'style'",
+        ),
+      ],
+    },
+  ],
+});
 
 export default async function (baseConfig: Configuration) {
   const withMf = await withModuleFederation(config, {
-    shareScope: 'default'
-  })
-  const webpackConfig = withMf(baseConfig)
+    shareScope: "default",
+  });
+  const webpackConfig = withMf(baseConfig);
 
   return {
     ...webpackConfig,
-    devtool: 'source-map',
-    plugins: [...(webpackConfig.plugins ?? []), modifyPrimeNgPlugin, modifyAngularCorePlugin],
+    devtool: "source-map",
+    plugins: [
+      ...(webpackConfig.plugins ?? []),
+      modifyPrimeNgPlugin,
+      modifyAngularCorePlugin,
+    ],
     output: {
       ...webpackConfig.output,
-      uniqueName: magicChar + 'onecx-angular-20-loader',
-      publicPath: 'auto',
-      devtoolNamespace: 'onecx-angular-20-loader'
+      uniqueName: magicChar + "onecx-angular-20-loader",
+      publicPath: "auto",
+      devtoolNamespace: "onecx-angular-20-loader",
     },
     module: {
       ...webpackConfig.module,
       parser: {
         ...webpackConfig.module.parser,
-        javascript: { ...webpackConfig.module.parser.javascript, importMeta: false }
-      }
-    }
-  }
+        javascript: {
+          ...webpackConfig.module.parser.javascript,
+          importMeta: false,
+        },
+      },
+    },
+  };
 }

@@ -9,7 +9,7 @@ PRELOADER_PATHS=(
 )
 
 # Define destination base path
-SHELL_DIST_PRELOADERS_PATH="./dist/onecx-shell-ui/pre_loaders"
+SHELL_DIST_PRELOADERS_PATH="./shell/dist/onecx-shell-ui/pre_loaders"
 
 # Function to copy a preloader into its own content folder
 copy_preloader() {

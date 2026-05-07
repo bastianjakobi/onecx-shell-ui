@@ -36,7 +36,10 @@ typings
 *.log
 *.sh
 !build-preloaders-parallel.sh
+!build-preloaders.sh
 !copy-preloaders.sh
+!install.sh
+!build.sh
 
 # System Files
 .DS_Store
